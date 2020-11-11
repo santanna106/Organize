@@ -27,5 +27,15 @@ public class MainActivity extends IntroActivity {
                 .fragment(R.layout.intro_dois)
                 .build());
 
+        addSlide(new FragmentSlide.Builder()
+                .background(R.color.white)
+                .fragment(R.layout.intro_tres)
+                .build());
+
+        addSlide(new FragmentSlide.Builder()
+                .background(R.color.white)
+                .fragment(R.layout.intro_quatro)
+                .build());
+
     }
 }
