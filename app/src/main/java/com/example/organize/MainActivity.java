@@ -18,6 +18,7 @@ public class MainActivity extends IntroActivity {
 
         addSlide(new FragmentSlide.Builder()
                 .background(R.color.white)
+                .canGoBackward(false)
                 .fragment(R.layout.intro_um)
                 .build());
 
@@ -35,6 +36,7 @@ public class MainActivity extends IntroActivity {
         addSlide(new FragmentSlide.Builder()
                 .background(R.color.white)
                 .fragment(R.layout.intro_quatro)
+                .canGoForward(false)
                 .build());
 
     }
