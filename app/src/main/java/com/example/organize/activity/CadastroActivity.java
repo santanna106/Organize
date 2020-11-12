@@ -36,7 +36,7 @@ public class CadastroActivity extends AppCompatActivity {
         campoEmail = findViewById(R.id.editEmail);
         campoSenha = findViewById(R.id.editSenha);
 
-        btnCadastrar = findViewById(R.id.btnCadastrar);
+        btnCadastrar = findViewById(R.id.btnEntrar);
 
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +79,9 @@ public class CadastroActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+
                     Toast.makeText(CadastroActivity.this,"Sucesso ao cadastrar o usuário!",Toast.LENGTH_LONG).show();
+                    finish();
                 } else {
                     String excecao = "";
 
