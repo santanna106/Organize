@@ -6,7 +6,11 @@ import android.view.View;
 
 import com.example.organize.R;
 import com.example.organize.activity.config.ConfiguracaoFireBase;
+import com.example.organize.activity.helper.Base64Custom;
+import com.example.organize.activity.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.heinrichreimersoftware.materialintro.slide.FragmentSlide;
 
@@ -69,6 +73,7 @@ public class MainActivity extends IntroActivity {
 
     public void verificarUsuarioLogado(){
         autenticacao = ConfiguracaoFireBase.getFirebaseAutenticacao();
+        //autenticacao.signOut();
 
         if(autenticacao.getCurrentUser() != null){
             abrirTelaPrincipal();

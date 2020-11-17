@@ -50,8 +50,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_height="40dp"
+            android:textColorHint="@color/black"
             android:hint="Ex 08/01//2020" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -70,8 +70,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_height="40dp"
+            android:textColorHint="@color/black"
             android:hint="ex: salário" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -90,8 +90,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_height="40dp"
+            android:textColorHint="@color/black"
             android:hint="ex salário mensal" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -104,6 +104,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_adicionar_branco"
+        app:srcCompat="@drawable/ic_confirmar_branco"
         tools:ignore="VectorDrawableCompat" />
 </androidx.constraintlayout.widget.ConstraintLayout>
