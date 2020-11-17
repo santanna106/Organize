@@ -11,7 +11,24 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
+    private double receitaTotal = 0.00;
+    private double despesaTotal = 0.00;
 
+    public double getReceitaTotal() {
+        return receitaTotal;
+    }
+
+    public void setReceitaTotal(double receitaTotal) {
+        this.receitaTotal = receitaTotal;
+    }
+
+    public double getDespesaTotal() {
+        return despesaTotal;
+    }
+
+    public void setDespesaTotal(double despesaTotal) {
+        this.despesaTotal = despesaTotal;
+    }
 
     public String getIdUsuario() {
         return idUsuario;

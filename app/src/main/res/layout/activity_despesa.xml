@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/editValorDespesa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -49,10 +49,11 @@
         app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editDataDespesa"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:textColorHint="@color/black"
-            android:hint="Ex 08/01//2020" />
+            android:hint="Ex 08/01//2020"
+            android:textColorHint="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -69,10 +70,11 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editCategoriaDespesa"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:textColorHint="@color/black"
-            android:hint="ex: salário" />
+            android:hint="ex: almoço"
+            android:textColorHint="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -89,18 +91,23 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editDescricaoDespesa"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:textColorHint="@color/black"
-            android:hint="ex salário mensal" />
+            android:hint="ex salário mensal"
+            android:textColorHint="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/fbnSalvarDespesa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+
+        android:onClick="salvarDespesa"
+        app:backgroundTint="@color/colorPrimaryDarkDespesa"
+        app:fab_colorNormal="@color/colorPrimaryDespesa"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

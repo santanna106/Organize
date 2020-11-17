@@ -6,13 +6,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class UsuarioDao implements IDao<Usuario> {
-    private DatabaseReference firebase;
+public class UsuarioDao extends DaoBase implements IDao<Usuario> {
+
+    public UsuarioDao(){
+
+        databaseReference = firebase.getReference("usuarios");
+    }
 
     @Override
     public void salvar(Usuario usuario) {
-        firebase = ConfiguracaoFireBase.getFirebase("usuarios");
-        firebase.push().setValue(usuario);
+        databaseReference.push().setValue(usuario);
     }
 
     @Override
