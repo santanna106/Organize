@@ -71,8 +71,15 @@ public class Usuario {
         firebase.setValue(this.getIdUsuario());
          DatabaseReference usersRef =firebase.child(this.getIdUsuario());
          usersRef.setValue(this);
+    }
 
-
-
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "idUsuario='" + idUsuario + '\'' +
+                ", nome='" + nome + '\'' +
+                ", receitaTotal=" + receitaTotal +
+                ", despesaTotal=" + despesaTotal +
+                '}';
     }
 }

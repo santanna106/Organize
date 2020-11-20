@@ -10,6 +10,15 @@ public class Movimentacao  {
     private String tipo;
     private double valor;
     private String idUsuario;
+    private String mesAno;
+
+    public String getMesAno() {
+        return mesAno;
+    }
+
+    public void setMesAno(String mesAno) {
+        this.mesAno = mesAno;
+    }
 
     public Movimentacao(){
 
