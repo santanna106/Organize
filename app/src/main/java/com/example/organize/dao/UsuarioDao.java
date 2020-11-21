@@ -45,7 +45,7 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
 
     @Override
     public void update(Usuario usuario) {
-        databaseReference.child(usuario.getIdUsuario()).setValue(usuario);
+        databaseReference.child(usuario.getId()).setValue(usuario);
     }
 
     @Override
@@ -59,12 +59,14 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
                 for (DataSnapshot usuarioSnapshot : dataSnapshot.getChildren()) {
 
                     Map<String, Object> map = (Map<String, Object>) usuarioSnapshot.getValue();
+                    Log.d("KEY: ",usuarioSnapshot.getKey());
+                    Log.d("KEY: ",map.toString());
                     UsuarioMapper uMapper = new UsuarioMapper();
-                    Usuario usuarioEncontrado = uMapper.toObject(map);
+                    Usuario usuarioEncontrado = uMapper.toObject(usuarioSnapshot,map);
 
                     if(usuarioEncontrado.getIdUsuario().equals(id)){
                         observer.onEvent(usuarioEncontrado);
-                         Log.d("ENCONTRADO: " , usuarioEncontrado.toString());
+
 
                     }
 

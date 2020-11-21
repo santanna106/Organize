@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/editValorDespesa"
+            android:id="@+id/editValorReceita"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -28,6 +28,7 @@
             android:gravity="end"
             android:hint="R$ 00,00"
             android:inputType="numberDecimal"
+            android:onClick="salvarReceita"
             android:textAlignment="textEnd"
             android:textColor="@color/white"
             android:textSize="30sp" />
@@ -49,6 +50,7 @@
         app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editDataReceita"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:hint="Ex 08/01//2020"
@@ -69,12 +71,12 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTipoReceita"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:textColorHint="@color/black"
             android:hint="ex: salário"
 
-            />
+            android:textColorHint="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -92,14 +94,16 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editDescricaoReceita"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:textColorHint="@color/black"
-            android:hint="ex salário mensal" />
+            android:hint="ex salário mensal"
+            android:textColorHint="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fbnSalvarDespesa"
+        android:onClick="salvarReceita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

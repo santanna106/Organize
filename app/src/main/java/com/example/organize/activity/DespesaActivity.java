@@ -3,7 +3,6 @@ package com.example.organize.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,18 +16,8 @@ import com.example.organize.activity.model.Usuario;
 import com.example.organize.dao.IObserver;
 import com.example.organize.dao.MovimentacaoDao;
 import com.example.organize.dao.UsuarioDao;
-import com.example.organize.mapper.UsuarioMapper;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Locale;
-import java.util.Map;
 
 public class DespesaActivity extends AppCompatActivity implements IObserver<Usuario> {
 
@@ -39,6 +28,7 @@ public class DespesaActivity extends AppCompatActivity implements IObserver<Usua
     private double despesaGerada;
     private double despesaAtualizada;
     private TextView txtNome;
+    private Usuario usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +62,12 @@ public class DespesaActivity extends AppCompatActivity implements IObserver<Usua
             movimentacao.setMesAno(DataUtil.dataMesAno(campoData.getText().toString()));
 
             despesaGerada = valorRecuperado;
-            despesaAtualizada = despesaTotal + despesaGerada;
+            despesaAtualizada = this.usuario.getDespesaTotal() + despesaGerada;
 
+            this.usuario.setDespesaTotal(despesaAtualizada);
+
+            UsuarioDao usuairoDao = new UsuarioDao();
+            usuairoDao.update(this.usuario);
 
 
             MovimentacaoDao dao = new MovimentacaoDao();
@@ -135,6 +129,6 @@ public class DespesaActivity extends AppCompatActivity implements IObserver<Usua
 
     @Override
     public void onEvent(Usuario data) {
-        txtNome.setText(data.getNome());
+        this.usuario = data;
     }
 }

@@ -31,7 +31,7 @@ public class MovimentacaoDao extends DaoBase<Movimentacao> implements IMovimenta
 
     @Override
     public void update(Movimentacao o) {
-
+        databaseReference.child(o.getId()).setValue(o);
     }
 
     @Override

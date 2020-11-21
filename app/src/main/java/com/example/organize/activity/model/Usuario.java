@@ -7,12 +7,21 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Usuario {
+    private String id;
     private String idUsuario;
     private String nome;
     private String email;
     private String senha;
     private double receitaTotal = 0.00;
     private double despesaTotal = 0.00;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public double getReceitaTotal() {
         return receitaTotal;
