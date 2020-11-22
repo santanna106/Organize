@@ -30,6 +30,8 @@ public class MainActivity extends IntroActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //getSupportActionBar().setTitle("Cadastro");
+
         setButtonNextVisible(false);
         setButtonBackVisible(false);
 
