@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
     private double receitaTotal;
     private double despesaTotal;
     private double resumo;
+    private UsuarioDao usuarioDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +51,13 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
         textoSaudacao = findViewById(R.id.textSaudacao);
         textoSaldo = findViewById(R.id.textSaldo);
         configuraCalendarView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         recuperarUsuario();
 
-        /*
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
     public void adicionarDespesa(View view){
@@ -118,9 +116,15 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
 
     public void recuperarUsuario() {
         String idUsuario = ConfiguracaoFireBase.getFirebaseAutenticacao().getCurrentUser().getUid();
-        UsuarioDao dao = new UsuarioDao();
-        dao.buscar(this,idUsuario);
+        usuarioDao = new UsuarioDao();
+        usuarioDao.buscar(this,idUsuario);
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        usuarioDao.destroy();
+
+    }
 }

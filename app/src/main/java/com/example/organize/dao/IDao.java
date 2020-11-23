@@ -7,4 +7,5 @@ public interface IDao  <T> {
     public void delete(T o);
     public void update(T o);
     public void buscar(IObserver<T> observer,String id);
+    public void destroy();
 }

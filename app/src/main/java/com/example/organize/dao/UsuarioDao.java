@@ -28,9 +28,11 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
 
     private Usuario usuario;
 
+
     public UsuarioDao(){
 
         databaseReference = firebase.getReference("usuarios");
+        Log.i("EVETO ","Evento Iniciado");
     }
 
     @Override
@@ -52,7 +54,7 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
     public void buscar(IObserver<Usuario> observer,String id) {
         //Usuario usuarioEncontrado = null;
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        eventListenerUsuario =  databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -85,6 +87,14 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
 
 
 
+    }
+
+    @Override
+    public void destroy() {
+        if(eventListenerUsuario != null){
+            databaseReference.removeEventListener(eventListenerUsuario);
+            Log.i("EVETO ","Evento Removido");
+        }
     }
 
 

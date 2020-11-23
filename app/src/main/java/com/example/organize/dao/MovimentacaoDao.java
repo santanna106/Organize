@@ -39,6 +39,14 @@ public class MovimentacaoDao extends DaoBase<Movimentacao> implements IMovimenta
 
     }
 
+    @Override
+    public void destroy() {
+       if(eventListenerUsuario != null){
+           databaseReference.removeEventListener(eventListenerUsuario);
+       }
+
+    }
+
 
 
 
