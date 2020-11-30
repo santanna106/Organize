@@ -24,7 +24,9 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_principal" />
+    <include
+       
+        layout="@layout/content_principal" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menuFab"

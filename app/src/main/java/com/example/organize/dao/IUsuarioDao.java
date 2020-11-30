@@ -1,4 +1,7 @@
 package com.example.organize.dao;
 
-public interface IUsuarioDao<T> extends IDao<T> {
+import com.example.organize.activity.model.Movimentacao;
+
+public interface IUsuarioDao<Usuario> extends IDao<Usuario> {
+    public void buscar(IObserverMovimentaUsuario<Usuario, Movimentacao> observer, String id);
 }

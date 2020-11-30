@@ -4,16 +4,23 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.organize.activity.config.ConfiguracaoFireBase;
+import com.example.organize.activity.model.Movimentacao;
 import com.example.organize.activity.model.Usuario;
-import com.example.organize.dao.IObserver;
+import com.example.organize.adapter.AdapterMovimentacao;
+import com.example.organize.adapter.AdapterMovimentacaoFire;
+import com.example.organize.dao.DaoBase;
+import com.example.organize.dao.IObserverMovimentaUsuario;
+import com.example.organize.dao.MovimentacaoDao;
 import com.example.organize.dao.UsuarioDao;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,14 +28,29 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.organize.R;
+import com.example.organize.mapper.MovimentacaoMapper;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-public class PrincipalActivity extends AppCompatActivity implements IObserver<Usuario> {
+public class PrincipalActivity extends AppCompatActivity implements IObserverMovimentaUsuario<Usuario,Movimentacao> {
 
     private MaterialCalendarView calendarView;
     private TextView textoSaudacao, textoSaldo;
@@ -38,6 +60,16 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
     private double despesaTotal;
     private double resumo;
     private UsuarioDao usuarioDao;
+    private MovimentacaoDao movimentacaoDao;
+    private ExecutorService executor;
+    private IObserverMovimentaUsuario<Usuario,Movimentacao> obj;
+
+
+
+    private RecyclerView recyclerMovimentos;
+    private AdapterMovimentacao adapterMovimentacao;
+    private AdapterMovimentacaoFire adapterMovimentacaoFire;
+    private List<Movimentacao> movimentacoes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +82,91 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
         calendarView = findViewById(R.id.calendarView);
         textoSaudacao = findViewById(R.id.textSaudacao);
         textoSaldo = findViewById(R.id.textSaldo);
+
+
+        recyclerMovimentos = (RecyclerView) findViewById(R.id.recyclerMovimento);
+        recyclerMovimentos.setLayoutManager(new LinearLayoutManager(this));
+        //RecyclerView rvContacts = (RecyclerView) findViewById(R.id.recyclerMovimento);
+
+
         configuraCalendarView();
+
+        FirebaseRecyclerOptions<Movimentacao> options =
+                new FirebaseRecyclerOptions.Builder<Movimentacao>()
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("movimentacao"), Movimentacao.class)
+                        .build();
+
+        adapterMovimentacaoFire = new AdapterMovimentacaoFire(options,this);
+
+        recyclerMovimentos.setAdapter(adapterMovimentacaoFire);
+
+        /*
+        FirebaseDatabase firebase = DaoBase.getDatabase();
+        DatabaseReference reference = firebase.getReference("movimentacao");
+        movimentacoes = new ArrayList<Movimentacao>();
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot movimentacaoSnapshot : dataSnapshot.getChildren()) {
+
+                    Map<String, Object> map = (Map<String, Object>) movimentacaoSnapshot.getValue();
+                    //Log.i("KEY: ", movimentacaoSnapshot.getKey());
+                    //Log.i("KEY: ", map.toString());
+                    MovimentacaoMapper mMapper = new MovimentacaoMapper();
+                    Movimentacao movimentacao = mMapper.toObject(movimentacaoSnapshot, map);
+                    movimentacoes.add(movimentacao);
+
+                }
+
+
+                //Log.i("MOVRECYCLE LISTA: ",movimentacoes.toString());
+                // observer.onEventLoadListaMovimentacao(movimentacoes);
+                //adapter.notifyDataSetChanged();
+                // Log.i("MOVRECYCLE: LISTA ", movimentacoes.toString());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Log.w("ERROR", "Failed to read value.", databaseError.toException());
+            }
+        });*/
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         recuperarUsuario();
+        adapterMovimentacaoFire.startListening();
+        //recuperarMovimentacoes();
+
+    }
+
+    public Future<List<Movimentacao>> getLista() {
+        executor = Executors.newCachedThreadPool();
+        return executor.submit(() -> {
+            MovimentacaoDao movimentacaoDao = new MovimentacaoDao();
+            movimentacaoDao.lista(this,this.adapterMovimentacao);
+            Thread.sleep(1000);
+            Log.i("EXECUTANDO THREAD: ",this.movimentacoes.toString());
+            return this.movimentacoes;
+        });
+    }
+
+    public void recuperarMovimentacoes()  {
+
+
+        adapterMovimentacao = new AdapterMovimentacao(movimentacoes,this);
+        adapterMovimentacao.notifyDataSetChanged();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerMovimentos.setLayoutManager(layoutManager);
+        recyclerMovimentos.setHasFixedSize(true);
+        recyclerMovimentos.setAdapter(adapterMovimentacao);
+
+
 
     }
 
@@ -105,14 +215,7 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onEvent(Usuario data) {
-        this.usuario = data;
-        this.textoSaudacao.setText("Olá, " + this.usuario.getNome());
-        DecimalFormat decimalFormat = new DecimalFormat("0.##");
-        String resultadoFormatado = "R$ " + decimalFormat.format(this.usuario.getReceitaTotal() - this.usuario.getDespesaTotal());
-        this.textoSaldo.setText(resultadoFormatado);
-    }
+
 
     public void recuperarUsuario() {
         String idUsuario = ConfiguracaoFireBase.getFirebaseAutenticacao().getCurrentUser().getUid();
@@ -125,6 +228,40 @@ public class PrincipalActivity extends AppCompatActivity implements IObserver<Us
     protected void onStop() {
         super.onStop();
         usuarioDao.destroy();
+        //movimentacaoDao.destroy();
+        adapterMovimentacaoFire.stopListening();
+
+    }
+
+    @Override
+    public void onEventLoadUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        this.textoSaudacao.setText("Olá, " + this.usuario.getNome());
+        DecimalFormat decimalFormat = new DecimalFormat("0.##");
+        String resultadoFormatado = "R$ " + decimalFormat.format(this.usuario.getReceitaTotal() - this.usuario.getDespesaTotal());
+        this.textoSaldo.setText(resultadoFormatado);
+    }
+
+    @Override
+    public void onEventLoadMovimentacao(Movimentacao movimentacao) {
+
+    }
+
+    @Override
+    public void onEventLoadListaMovimentacao(List<Movimentacao> m) {
+        this.movimentacoes = m;
+
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+    }
+}
+class Teste implements Runnable{
+
+    @Override
+    public void run() {
 
     }
 }

@@ -1,5 +1,7 @@
 package com.example.organize.mapper;
 
+import android.util.Log;
+
 import com.example.organize.activity.model.Movimentacao;
 import com.example.organize.activity.model.Usuario;
 import com.google.firebase.database.DataSnapshot;

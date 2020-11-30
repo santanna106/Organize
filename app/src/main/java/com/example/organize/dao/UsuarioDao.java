@@ -2,29 +2,17 @@ package com.example.organize.dao;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.example.organize.activity.config.ConfiguracaoFireBase;
+import com.example.organize.activity.model.Movimentacao;
 import com.example.organize.activity.model.Usuario;
 import com.example.organize.mapper.UsuarioMapper;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-import static android.content.ContentValues.TAG;
-
-public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario> {
+public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario>  {
 
     private Usuario usuario;
 
@@ -50,9 +38,8 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
         databaseReference.child(usuario.getId()).setValue(usuario);
     }
 
-    @Override
-    public void buscar(IObserver<Usuario> observer,String id) {
-        //Usuario usuarioEncontrado = null;
+
+    public void buscar(IObserver<Usuario> observer, String id) {
 
         eventListenerUsuario =  databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -69,6 +56,39 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
                     if(usuarioEncontrado.getIdUsuario().equals(id)){
                         observer.onEvent(usuarioEncontrado);
 
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Log.w("ERROR", "Failed to read value.", databaseError.toException());
+            }
+        });
+
+    }
+
+
+    @Override
+    public void buscar(IObserverMovimentaUsuario<Usuario, Movimentacao> observer, String id) {
+
+        eventListenerUsuario =  databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot usuarioSnapshot : dataSnapshot.getChildren()) {
+
+                    Map<String, Object> map = (Map<String, Object>) usuarioSnapshot.getValue();
+                    Log.d("KEY: ",usuarioSnapshot.getKey());
+                    Log.d("KEY: ",map.toString());
+                    UsuarioMapper uMapper = new UsuarioMapper();
+                    Usuario usuarioEncontrado = uMapper.toObject(usuarioSnapshot,map);
+
+                    if(usuarioEncontrado.getIdUsuario().equals(id)){
+                        observer.onEventLoadUsuario(usuarioEncontrado);
+
 
                     }
 
@@ -82,12 +102,8 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
             }
         });
 
-
-
-
-
-
     }
+
 
     @Override
     public void destroy() {
@@ -95,6 +111,11 @@ public class UsuarioDao extends DaoBase <Usuario> implements IUsuarioDao<Usuario
             databaseReference.removeEventListener(eventListenerUsuario);
             Log.i("EVETO ","Evento Removido");
         }
+    }
+
+    @Override
+    public List<Usuario> lista() {
+        return null;
     }
 
 
