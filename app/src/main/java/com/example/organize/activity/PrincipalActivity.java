@@ -1,5 +1,6 @@
 package com.example.organize.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,8 +16,10 @@ import com.example.organize.dao.UsuarioDao;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.organize.R;
 import com.example.organize.mapper.MovimentacaoMapper;
@@ -61,6 +65,7 @@ public class PrincipalActivity extends AppCompatActivity implements IObserverMov
     private double resumo;
     private UsuarioDao usuarioDao;
     private MovimentacaoDao movimentacaoDao;
+    private Movimentacao movimentacao;
     private ExecutorService executor;
     private IObserverMovimentaUsuario<Usuario,Movimentacao> obj;
 
@@ -91,6 +96,10 @@ public class PrincipalActivity extends AppCompatActivity implements IObserverMov
 
         configuraCalendarView();
 
+        MovimentacaoDao dao = new MovimentacaoDao();
+        dao.lista(this);
+       // movimentacoes = FirebaseDatabase.getInstance().getReference().child("movimentacao");
+
         FirebaseRecyclerOptions<Movimentacao> options =
                 new FirebaseRecyclerOptions.Builder<Movimentacao>()
                         .setQuery(FirebaseDatabase.getInstance().getReference().child("movimentacao"), Movimentacao.class)
@@ -99,6 +108,7 @@ public class PrincipalActivity extends AppCompatActivity implements IObserverMov
         adapterMovimentacaoFire = new AdapterMovimentacaoFire(options,this);
 
         recyclerMovimentos.setAdapter(adapterMovimentacaoFire);
+        swipe();
 
         /*
         FirebaseDatabase firebase = DaoBase.getDatabase();
@@ -257,11 +267,65 @@ public class PrincipalActivity extends AppCompatActivity implements IObserverMov
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
     }
-}
-class Teste implements Runnable{
 
-    @Override
-    public void run() {
+    public void swipe(){
+        ItemTouchHelper.SimpleCallback itemToch = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                int dragFlags = ItemTouchHelper.ACTION_STATE_IDLE;
+                int swaipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
 
+                return makeMovementFlags(dragFlags,swaipeFlags);
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+                excluirMovimentacao(viewHolder);
+
+
+            }
+        };
+
+        new ItemTouchHelper(itemToch).attachToRecyclerView(recyclerMovimentos);
+    }
+
+    public void excluirMovimentacao(RecyclerView.ViewHolder viewHolder){
+        AlertDialog.Builder builder = new  AlertDialog.Builder(PrincipalActivity.this);
+        builder.setTitle("Deleta Movimentação");
+        builder.setMessage("Você tem certeza que quer deletar essa movimentação?");
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int posicao = viewHolder.getAdapterPosition();
+                adapterMovimentacaoFire.delete(posicao);
+                adapterMovimentacaoFire.notifyItemRemoved(posicao);
+                //viewHolder.get
+               // movimentacao= movimentacoes.get(posicao);
+
+                //Log.i("MOVENC",movimentacao.toString());
+                //MovimentacaoDao dao = new MovimentacaoDao();
+                //dao.delete(movimentacao);
+                //adapterMovimentacaoFire.notifyItemRemoved(posicao);
+                //movimentacoes.remove(posicao);
+
+            }
+        });
+
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(PrincipalActivity.this,"Cancelado",Toast.LENGTH_LONG).show();
+                adapterMovimentacaoFire.notifyDataSetChanged();
+            }
+        });
+
+        builder.show();
     }
 }
+

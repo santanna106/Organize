@@ -42,7 +42,7 @@ public class MovimentacaoDao extends DaoBase<Movimentacao> implements IMovimenta
 
     @Override
     public void delete(Movimentacao o) {
-
+        databaseReference.child(o.getId()).removeValue();
     }
 
     @Override

@@ -56,6 +56,11 @@ public class AdapterMovimentacaoFire extends FirebaseRecyclerAdapter<Movimentaca
             holder.valor.setText("-" + model.getValor());
         }
 
+
+    }
+
+    public void delete(int posicao){
+        getSnapshots().getSnapshot(posicao).getRef().removeValue();
     }
 
 
